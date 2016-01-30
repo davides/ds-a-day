@@ -19,6 +19,18 @@ public:
     }
   }
 
+  bool contains(T value) {
+    if (value == value_) {
+      return true;
+    } else if (value < value_ && left_ != NULL) {
+      return left_->contains(value);
+    } else if (value > value_ && right_ != NULL) {
+      return right_->contains(value);
+    }
+
+    return false;
+  }
+
   T value() { return value_; }
   Bst<T>* left() { return left_; }
   Bst<T>* right() { return right_; }

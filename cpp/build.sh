@@ -10,3 +10,5 @@
 g++ bst_unittest.cc -isystem ${GTEST_DIR}/include -c bst_unittest.cc
 
 g++ bst_unittest.o ${GTEST_DIR}/libgtest.a ${GTEST_DIR}/libgtest_main.a -lpthread -o bst_unittest.out
+
+./bst_unittest.out
