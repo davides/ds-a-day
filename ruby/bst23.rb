@@ -67,7 +67,6 @@ private
       node.values.send(op, value)
     else
       upshift = _insert(child, value)
-      node.children.delete(child) if !upshift.nil?
     end
 
     if !upshift.nil?

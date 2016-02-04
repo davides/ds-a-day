@@ -78,4 +78,39 @@ RSpec.describe Bst23, '#insert' do
     expect(b.root.middle.values).to eq [1]
     expect(b.root.right.values).to eq [1]
   end
+
+  it "handles insert into 2-node" do
+    b = Bst23.new
+
+    [2, 5, 6, 9, 4].each {|i| b.insert(i) }
+    
+    expect(b.root.values).to eq [5]
+    expect(b.root.left.values).to eq [2,4]
+    expect(b.root.right.values).to eq [6,9]
+  end
+
+  it "handles insert into 3-node with 2-node parent" do
+    b = Bst23.new
+
+    [2, 5, 6, 9, 4, 10].each {|i| b.insert(i) }
+
+    expect(b.root.values).to eq [5,9]
+    expect(b.root.left.values).to eq [2,4]
+    expect(b.root.middle.values).to eq [6]
+    expect(b.root.right.values).to eq [10]
+  end
+
+  it "handles insert into 3-node with 3-node parent" do
+    b = Bst23.new
+
+    [2, 5, 6, 9, 4, 10, 1].each {|i| b.insert(i) }
+
+    expect(b.root.values).to eq [5]
+    expect(b.root.left.values).to eq [2]
+    expect(b.root.right.values).to eq [9]
+    expect(b.root.left.left.values).to eq [1]
+    expect(b.root.left.right.values).to eq [4]
+    expect(b.root.right.left.values).to eq [6]
+    expect(b.root.right.right.values).to eq [10]
+  end
 end
