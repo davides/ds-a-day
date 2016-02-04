@@ -14,25 +14,26 @@ class Bst23
       @values.sort!
     end
 
-    def left_value; @values.first; end
-
-    def middle_value; @values[1]; end
-
-    def right_value; @values.last; end
+    def add_child(child)
+      @children.push child
+      @children.sort_by! {|c| c.values[0] }
+    end
 
     def left; @children.first; end
 
     def left=(node); @children.unshift node; end
 
+    def middle; three_node? ? @children[1] : nil; end
+
     def right; @children.last; end
 
     def right=(node); @children.push node; end
 
-    def two_node?; @values.length < 2; end
+    def two_node?; @values.length == 1; end
 
-    def three_node?; @values.length < 3; end
+    def three_node?; @values.length == 2; end
 
-    def four_node?; @values.length < 4; end
+    def four_node?; @values.length == 3; end
 
     def leaf?; @children.empty?; end
   end
@@ -45,23 +46,48 @@ class Bst23
     if @root.nil?
       @root = make_node(value)
     else
-      if @root.two_node?
-        if @root.leaf?
-          @root.add_value(value)
-        end
-      else #three_node? == true
-        if @root.leaf?
-          @root.add_value(value)
-          new_root = make_node(@root.middle_value)
-          new_root.left = make_node(@root.left_value)
-          new_root.right = make_node(@root.right_value)
-          @root = new_root
-        end
-      end
+      upshift = _insert @root, value
+      @root = upshift || @root
     end
   end
 
 private 
+
+
+  def _insert node, value
+    upshift, result = nil, nil
+
+    if value < node.values.first
+      child, op = node.left, :unshift
+    elsif value >= node.values.last
+      child, op = node.right, :push
+    end
+
+    if child.nil?
+      node.values.send(op, value)
+    else
+      upshift = _insert(child, value)
+      node.children.delete(child) if !upshift.nil?
+    end
+
+    if !upshift.nil?
+      node.add_value(upshift.values[0])
+      upshift.children.each {|c| node.add_child(c) }
+      node.children.delete(child)
+    end
+
+    if node.four_node?
+      result = make_node(node.values[1])
+      result.left = make_node(node.values[0])
+      result.left.left = node.children[0]
+      result.left.right = node.children[1]
+      result.right = make_node(node.values[2])
+      result.right.left = node.children[2]
+      result.right.right = node.children[3]
+    end
+
+    return result
+  end
 
   def make_node value
     Node.new(value)
